@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/25 16:02:22 by tcohen            #+#    #+#             */
-/*   Updated: 2024/09/28 16:19:20 by theog            ###   ########.fr       */
+/*   Updated: 2024/09/29 16:29:56 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,44 +28,65 @@ int	ft_cmd_arg(char *cmd, t_info_exec *info)
 	return (0);
 }
 
-void	ft_cmd1(t_info_exec *cmd, int fd[2])
+int     ft_close_wrongpipes(t_info_exec *cmd)
 {
-	close(fd[0]);
-	ft_execve(cmd);
-}
+    t_info_exec *next_cmd;
+    t_info_exec *prev_cmd;
 
-void	ft_cmd2(t_info_exec *cmd, int fd[2])
-{
-	close(fd[1]);
-	ft_execve(cmd);
-}
+    next_cmd = cmd->next;
+    prev_cmd = cmd->prev;
 
-int	ft_first_child(char **argv, char **env, int fd[2], t_info_exec *cmd)
+    close(cmd->pipe_fd[0]);
+    while(next_cmd)
+    {
+        ft_close_pipe(next_cmd->pipe_fd);
+        next_cmd = next_cmd->next;
+    }
+    if (prev_cmd != NULL)
+    {
+        close(prev_cmd->pipe_fd[1]);
+        prev_cmd = prev_cmd->prev;
+    }
+    while(prev_cmd)
+    {
+        ft_close_pipe(prev_cmd->pipe_fd);
+        prev_cmd = prev_cmd->prev;
+    }
+    return (0);
+}
+int		ft_close_remaining_pipes(t_info_exec *cmd, t_info_exec **lst)
 {
-	ft_check_argv(argv[2], fd);
-	cmd->in_out_fd = ft_open(argv[1], 'r', cmd);
-	if (ft_dup2(fd[1], 1) == -1)
-		return (ft_close_all(fd, cmd->in_out_fd), 1);
-	if (ft_dup2(cmd->in_out_fd, 0) == -1)
-		return (ft_close_all(fd, cmd->in_out_fd), 1);
-	ft_cmd_arg(argv[2], cmd);
-	if (ft_path(env, cmd) == 1)
-		return (ft_close_all(fd, cmd->in_out_fd), 1);
-	ft_cmd1(cmd, fd);
+	t_info_exec	*last;
+
+	last = ft_pipelst_last(*lst);
+	if (cmd == *lst)
+		close(cmd->pipe_fd[1]);
+	if (cmd == last)
+		close(cmd->prev->pipe_fd[0]);
+	else
+	{
+		close(cmd->pipe_fd[1]);
+		close(cmd->prev->pipe_fd[0]);
+	}
 	return (0);
 }
 
-int	ft_2nd_child(char **argv, char **env, int fd[2], t_info_exec *cmd)
+
+int	ft_exec_child(t_info_exec *cmd, t_info_exec **lst, char **env, int status)
 {
-	ft_check_argv(argv[3], fd);
-	cmd->in_out_fd = ft_open(argv[4], 'w', cmd);
-	if (ft_dup2(fd[0], 0) == -1)
-		return (ft_close_all(fd, cmd->in_out_fd), 1);
-	if (ft_dup2(cmd->in_out_fd, 1) == -1)
-		return (ft_close_all(fd, cmd->in_out_fd), 1);
-	ft_cmd_arg(argv[3], cmd);
+	//ft_check_argv(argv[2], fd);
+	//cmd->in_out_fd = ft_open(argv[1], 'r', cmd);
+    ft_close_wrongpipes(cmd);
+    if (status != 0)
+	    if (ft_dup2(cmd->prev->pipe_fd[0], 0) == -1)
+		    return (ft_close_allpipes(*lst), 1);
+    // ici call ft_redirection
+    if (status != 1)
+	    if (ft_dup2(cmd->pipe_fd[1], 1) == -1)
+		    return (ft_close_allpipes(*lst), 1);
+	ft_cmd_arg(cmd->cmd, cmd);
 	if (ft_path(env, cmd) == 1)
-		return (ft_close_all(fd, cmd->in_out_fd), 1);
-	ft_cmd2(cmd, fd);
+		return (ft_close_allpipes(*lst), 1);
+	ft_execve(cmd, lst);
 	return (0);
 }

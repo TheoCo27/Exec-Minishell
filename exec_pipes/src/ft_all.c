@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 15:27:54 by tcohen            #+#    #+#             */
-/*   Updated: 2024/09/28 16:19:20 by theog            ###   ########.fr       */
+/*   Updated: 2024/09/29 15:35:38 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,17 +24,17 @@ void	ft_close_all(int pipe_fd[2], int in_out_fd)
 	close(in_out_fd);
 }
 
-int	ft_wait_pids(t_info_exec *lst)
+int	ft_wait_pids(t_info_exec *lst, int status)
 {
 	t_info_exec	*temp;
 
 	temp = lst;
 	while(temp)
 	{
-		waitpid(temp->pid, NULL, 0);
+		waitpid(temp->pid, &status, 0);
 		temp = temp->next;
 	}
-	return (0);
+	return (WIFEXITED(status) && WEXITSTATUS(status));
 }
 
 int	ft_clean_info(t_info_exec *cmd)

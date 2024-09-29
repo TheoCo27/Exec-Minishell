@@ -6,7 +6,7 @@
 #    By: theog <theog@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/15 14:31:33 by tcohen            #+#    #+#              #
-#    Updated: 2024/09/28 17:56:59 by theog            ###   ########.fr        #
+#    Updated: 2024/09/29 16:34:12 by theog            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ LIBFT_DIR = libft
 SRC_DIR = src
 OBJ_DIR = obj
 LIBFT = $(LIBFT_DIR)/libft.a
-FLAGS =  -g3
+FLAGS =  -Wall -Wextra -Werror -g3
 CC = cc
 SRC = main.c ft_child.c ft_path.c ft_secure.c ft_all.c ft_check.c ft_set.c \
 	ft_pipe_lst.c ft_exec_one.c ft_while_cmd.c

@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 16:44:50 by tcohen            #+#    #+#             */
-/*   Updated: 2024/09/28 19:28:15 by theog            ###   ########.fr       */
+/*   Updated: 2024/09/29 16:53:54 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,29 +48,24 @@
 int	main(int argc, char **argv, char **env)
 {
 	t_info_exec	*lst;
-	t_info_exec	*temp_lst;
-	size_t		lst_size;
+	int			status;
 
+	status = 0;
 	ft_check_argc(argc);
 	lst = NULL;
 	lst = ft_make_pipelst(argv);
-	ft_set_pipes(&lst);
 	if (!lst)
 		return (1);
-	lst_size = ft_pipelst_size(lst);
-	printf("lst-size = %lu\n", lst_size);
+	if (ft_pipelst_size(lst) == 1)
+        return (status = ft_only_child(lst, env, &lst), status);//gestion leaks a part a faire
+	ft_set_pipes(&lst);
+	//leaks free till here
 	ft_while_fork(&lst, env);
-	// temp_lst = lst;
-	// while(lst_size > 0)
-	// {
-	// 	temp_lst->pid = fork();
-	// 	if (lst_size == 1)
-	// 		return(ft_only_child(argv, env, fd, temp_lst));
-	// }
 	if (ft_pipelst_size(lst) > 1)
     	ft_close_allpipes(lst);
-    ft_wait_pids(lst);
+    status = ft_wait_pids(lst, status);
     ft_pipelst_clear(&lst);
+	return (status);
 }
 
 
