@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 16:51:13 by tcohen            #+#    #+#             */
-/*   Updated: 2024/09/29 16:35:46 by theog            ###   ########.fr       */
+/*   Updated: 2024/09/30 02:52:13 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@ typedef struct s_info_exec
 }			t_info_exec;
 
 //ft_child.c
-int		ft_cmd_arg(char *cmd, t_info_exec *info);
-int	ft_exec_child(t_info_exec *cmd, t_info_exec **lst, char **env, int status);
-int     ft_close_wrongpipes(t_info_exec *cmd);
+int		ft_cmd_arg(char *cmd, t_info_exec *info, t_info_exec **lst);
+int		ft_exec_child(t_info_exec *cmd, t_info_exec **lst, char **env, int status);
+int     ft_close_wrongpipes(t_info_exec *cmd, t_info_exec **lst);
 
 //ft_path.c
 int		ft_getenv_path(char **env, t_info_exec *info);
@@ -47,7 +47,8 @@ int		ft_path(char **env, t_info_exec *info);
 int		ft_open(char *file_name, char mode, t_info_exec *info);
 int		ft_dup2(int old_fd, int new_fd);
 int		ft_execve(t_info_exec *cmd, t_info_exec **lst);
-int	ft_pipe(int fd[2], t_info_exec	**lst, t_info_exec *cmd);
+int		ft_pipe(int fd[2], t_info_exec	**lst, t_info_exec *cmd);
+int		ft_fork(t_info_exec *cmd, t_info_exec **lst);
 // ft_all.c
 void	ft_close_pipe(int pipe_fd[2]);
 void	ft_close_all(int pipe_fd[2], int in_out_fd);

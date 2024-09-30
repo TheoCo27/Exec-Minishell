@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 16:14:26 by theog             #+#    #+#             */
-/*   Updated: 2024/09/29 16:40:39 by theog            ###   ########.fr       */
+/*   Updated: 2024/09/30 02:22:54 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,7 @@ int ft_while_fork(t_info_exec **lst_cmd, char **env)
     last = ft_pipelst_last(cmd);
     while(cmd)
     {
-        cmd->pid = fork();
-        if (cmd->pid < 0)
-        {
-            ft_putendl_fd("Error fork", 2);
-            exit (1);
-        }
+        ft_fork(cmd, lst_cmd);
         if (cmd->pid == 0 && cmd == *lst_cmd)
             ft_exec_child(cmd, lst_cmd, env, 0);
         if (cmd->pid == 0 && cmd == last)

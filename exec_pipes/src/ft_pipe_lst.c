@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 19:09:56 by tcohen            #+#    #+#             */
-/*   Updated: 2024/09/28 16:30:07 by theog            ###   ########.fr       */
+/*   Updated: 2024/09/30 02:15:00 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ t_info_exec	*ft_pipelst_new(char *cmd)
 	new->cmd = cmd;
 	new->next = NULL;
 	new->prev = NULL;
+	new->pid = -1;
 	return (new);
 }
 

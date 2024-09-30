@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 02:11:10 by theog             #+#    #+#             */
-/*   Updated: 2024/09/29 16:35:26 by theog            ###   ########.fr       */
+/*   Updated: 2024/09/30 03:09:26 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 
 int	ft_only_child(t_info_exec *cmd, char **env, t_info_exec **lst)
 {
+    int status;
+
+    status = 0;
     cmd->pid = fork();
     if (cmd->pid == 0)
     {
@@ -23,11 +26,13 @@ int	ft_only_child(t_info_exec *cmd, char **env, t_info_exec **lst)
         // 	return (ft_close_all(fd, cmd->in_out_fd), 1);
         // if (ft_dup2(cmd->in_out_fd, 1) == -1)
         // 	return (ft_close_all(fd, cmd->in_out_fd), 1);
-        ft_cmd_arg(cmd->cmd, cmd);
+        ft_cmd_arg(cmd->cmd, cmd, lst);
         if (ft_path(env, cmd) == 1)
-            return(1);
+            return(ft_pipelst_clear(lst), 1);
             // return (ft_close_all(fd, cmd->in_out_fd), 1);
 	    ft_execve(cmd, lst);
     }
-	return (0);
+    status = ft_wait_pids(*lst, status);
+    ft_pipelst_clear(lst);
+	return (status);
 }

@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 15:27:54 by tcohen            #+#    #+#             */
-/*   Updated: 2024/09/29 15:35:38 by theog            ###   ########.fr       */
+/*   Updated: 2024/09/30 02:16:56 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ int	ft_wait_pids(t_info_exec *lst, int status)
 	temp = lst;
 	while(temp)
 	{
-		waitpid(temp->pid, &status, 0);
+		if (temp->pid != -1)
+			waitpid(temp->pid, &status, 0);
 		temp = temp->next;
 	}
 	return (WIFEXITED(status) && WEXITSTATUS(status));

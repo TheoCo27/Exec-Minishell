@@ -6,13 +6,13 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/25 16:02:22 by tcohen            #+#    #+#             */
-/*   Updated: 2024/09/29 16:29:56 by theog            ###   ########.fr       */
+/*   Updated: 2024/09/30 02:53:21 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-int	ft_cmd_arg(char *cmd, t_info_exec *info)
+int	ft_cmd_arg(char *cmd, t_info_exec *info, t_info_exec **lst)
 {
 	char	**tab;
 
@@ -20,7 +20,8 @@ int	ft_cmd_arg(char *cmd, t_info_exec *info)
 	if (!tab)
 	{
 		perror("malloc failed");
-		ft_close_all(info->pipe_fd, info->in_out_fd);
+		ft_close_remaining_pipes(info, lst);
+		ft_pipelst_clear(lst);
 		exit(1);
 	}
 	info->cmd = tab[0];
@@ -28,15 +29,16 @@ int	ft_cmd_arg(char *cmd, t_info_exec *info)
 	return (0);
 }
 
-int     ft_close_wrongpipes(t_info_exec *cmd)
+int     ft_close_wrongpipes(t_info_exec *cmd, t_info_exec **lst)
 {
     t_info_exec *next_cmd;
     t_info_exec *prev_cmd;
 
     next_cmd = cmd->next;
     prev_cmd = cmd->prev;
-
     close(cmd->pipe_fd[0]);
+	if (cmd == ft_pipelst_last(*lst))
+		close(cmd->pipe_fd[1]);
     while(next_cmd)
     {
         ft_close_pipe(next_cmd->pipe_fd);
@@ -76,17 +78,17 @@ int	ft_exec_child(t_info_exec *cmd, t_info_exec **lst, char **env, int status)
 {
 	//ft_check_argv(argv[2], fd);
 	//cmd->in_out_fd = ft_open(argv[1], 'r', cmd);
-    ft_close_wrongpipes(cmd);
+    ft_close_wrongpipes(cmd, lst);
     if (status != 0)
 	    if (ft_dup2(cmd->prev->pipe_fd[0], 0) == -1)
-		    return (ft_close_allpipes(*lst), 1);
+		    return (ft_close_remaining_pipes(cmd, lst), 1);
     // ici call ft_redirection
     if (status != 1)
 	    if (ft_dup2(cmd->pipe_fd[1], 1) == -1)
-		    return (ft_close_allpipes(*lst), 1);
-	ft_cmd_arg(cmd->cmd, cmd);
+		    return (ft_close_remaining_pipes(cmd, lst), 1);
+	ft_cmd_arg(cmd->cmd, cmd, lst);
 	if (ft_path(env, cmd) == 1)
-		return (ft_close_allpipes(*lst), 1);
+		return (ft_close_remaining_pipes(cmd, lst), 1);
 	ft_execve(cmd, lst);
 	return (0);
 }
