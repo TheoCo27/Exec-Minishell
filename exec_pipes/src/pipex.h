@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 16:51:13 by tcohen            #+#    #+#             */
-/*   Updated: 2024/09/30 02:52:13 by theog            ###   ########.fr       */
+/*   Updated: 2024/10/01 02:34:21 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include "../libft/libft.h"
 # include <fcntl.h>
 # include <sys/wait.h>
+# include <errno.h>
 
 typedef struct s_info_exec
 {

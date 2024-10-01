@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 11:48:02 by tcohen            #+#    #+#             */
-/*   Updated: 2024/09/30 03:08:43 by theog            ###   ########.fr       */
+/*   Updated: 2024/10/01 02:35:23 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	ft_open(char *file_name, char mode, t_info_exec *info)
 		ft_close_pipe(info->pipe_fd);
 		//ft_close_remaining_pipes(cmd, lst);
 		//ft_pipelst_clear(lst);
-		exit (2);
+		exit(errno);
 	}
 	return (fd);
 }
@@ -49,9 +49,10 @@ int	ft_execve(t_info_exec *cmd, t_info_exec **lst)
 	{
 		perror(cmd->path);
 		ft_clean_info(cmd);
-		ft_close_remaining_pipes(cmd, lst);
+		if (ft_pipelst_size(*lst) > 1)
+			ft_close_remaining_pipes(cmd, lst);
 		ft_pipelst_clear(lst);
-		exit (1);
+		exit (errno);
 	}
 	return (-1);
 }
@@ -71,7 +72,7 @@ int	ft_pipe(int fd[2], t_info_exec	**lst, t_info_exec *cmd)
 		}
 		ft_pipelst_clear(lst);
 		perror("pipe failed");
-		exit(1);
+		exit(errno);
 	}
 	return (0);
 }

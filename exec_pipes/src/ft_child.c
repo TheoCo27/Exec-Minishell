@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/25 16:02:22 by tcohen            #+#    #+#             */
-/*   Updated: 2024/09/30 02:53:21 by theog            ###   ########.fr       */
+/*   Updated: 2024/10/01 02:36:16 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	ft_cmd_arg(char *cmd, t_info_exec *info, t_info_exec **lst)
 		perror("malloc failed");
 		ft_close_remaining_pipes(info, lst);
 		ft_pipelst_clear(lst);
-		exit(1);
+		exit(errno);
 	}
 	info->cmd = tab[0];
 	info->arg = tab;
